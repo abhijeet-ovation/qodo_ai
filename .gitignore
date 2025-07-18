@@ -1,0 +1,7 @@
+qodo-ci.md
+sink-config.yaml
+sink.tmpl
+.qodo
+node_modules
+coverage
+.env
