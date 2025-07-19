@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
     inputs:
       desired_coverage:
-        description: "Desired coverage percentage"
         default: "80"
 
 jobs:
@@ -19,14 +18,14 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - run: npm ci        # install YOUR dependencies
+      - run: npm ci
 
       - name: Qodo Cover
         uses: qodo-ai/qodo-ci/.github/actions/qodo-cover@v0.1.15
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           project_language: javascript
-          project_root: .                             # <- root of your repo
+          project_root: .
           code_coverage_report_path: coverage/cobertura-coverage.xml
           test_command: "npm run test -- --coverage --coverageReporters=cobertura"
           desired_coverage: ${{ github.event.inputs.desired_coverage }}
@@ -34,3 +33,4 @@ jobs:
           source_folder: src
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LOCAL: true          # <──-- this line disables all git pushes/resets
