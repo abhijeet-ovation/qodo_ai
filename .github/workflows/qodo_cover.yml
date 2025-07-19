@@ -1,0 +1,36 @@
+name: Qodo Cover
+
+on:
+  workflow_dispatch:
+    inputs:
+      desired_coverage:
+        description: "Desired coverage percentage"
+        default: "80"
+
+jobs:
+  cover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci        # install YOUR dependencies
+
+      - name: Qodo Cover
+        uses: qodo-ai/qodo-ci/.github/actions/qodo-cover@v0.1.15
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          project_language: javascript
+          project_root: .                             # <- root of your repo
+          code_coverage_report_path: coverage/cobertura-coverage.xml
+          test_command: "npm run test -- --coverage --coverageReporters=cobertura"
+          desired_coverage: ${{ github.event.inputs.desired_coverage }}
+          test_folder: tests
+          source_folder: src
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
